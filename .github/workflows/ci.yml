@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Format & analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed apps packages
+      - run: cd apps/marketplace && flutter gen-l10n
+      - run: flutter analyze --fatal-infos
+
+  test:
+    name: Test ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [packages/marketplace_api, packages/ui_kit, apps/marketplace]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - name: Generate localizations
+        if: matrix.package == 'apps/marketplace'
+        run: cd apps/marketplace && flutter gen-l10n
+      - name: Test
+        working-directory: ${{ matrix.package }}
+        run: |
+          if grep -q "sdk: flutter" pubspec.yaml; then
+            flutter test --coverage
+          else
+            dart test
+          fi
+
+  build-android:
+    name: Build Android
+    needs: [analyze, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: cd apps/marketplace && flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: marketplace-debug-apk
+          path: apps/marketplace/build/app/outputs/flutter-apk/app-debug.apk
