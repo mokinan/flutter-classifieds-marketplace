@@ -1,0 +1,21 @@
+name: ui_kit
+description: Design tokens and reusable widgets for the marketplace app.
+version: 1.0.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_localizations:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
