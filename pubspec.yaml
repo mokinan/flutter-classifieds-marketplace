@@ -1,0 +1,10 @@
+name: marketplace_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+workspace:
+  - apps/marketplace
+  - packages/marketplace_api
+  - packages/ui_kit

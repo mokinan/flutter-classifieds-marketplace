@@ -1,0 +1,19 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/l10n/gen/**"
+
+formatter:
+  page_width: 120
+
+linter:
+  rules:
+    # `ref.read(x.notifier).load()` in callbacks is idiomatic; unawaited
+    # futures inside async code are still caught by `unawaited_futures`.
+    discarded_futures: false
+    public_member_api_docs: false
+    # Single-method interfaces are deliberate seams for DI and tests.
+    one_member_abstracts: false
+    lines_longer_than_80_chars: false

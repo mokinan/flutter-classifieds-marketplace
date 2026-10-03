@@ -1,0 +1,15 @@
+# Dart / Flutter
+.dart_tool/
+build/
+.flutter-plugins-dependencies
+**/ios/Flutter/.last_build_id
+*.iml
+.idea/
+.DS_Store
+coverage/
+
+# Generated
+**/l10n/gen/
+
+# Raw integration-test screenshots; curated images live in docs/media/
+**/docs/media/raw/
